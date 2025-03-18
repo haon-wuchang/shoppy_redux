@@ -49,7 +49,6 @@ export function useCart() {  //custom Hook(커스텀훅)
         setCartCount(result.data.count);
         return result.data.count;
     }
-
     /**
      * 장바구니 카운트 초기화
      */

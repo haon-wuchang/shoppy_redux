@@ -6,24 +6,14 @@ import { validateLogin } from '../utils/funcValidate.js';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../auth/AuthContext.js';
-import { getLogin } from '../services/authApi.js';
+import { getLogin,getLoginReset } from '../services/authApi.js';
 import {useSelector, useDispatch} from 'react-redux';
 
 export default function Login() {
     const dispatch = useDispatch();
     const isLoggedIn = useSelector(state => state.login.isLoggedIn); 
+    const isError = useSelector(state => state.login.isError);
     const navigate = useNavigate();
-
-    useEffect(()=>{
-        if(isLoggedIn){
-            alert('로그인 성공');
-            navigate('/');
-        } else{
-            // alert('로그인 실패');
-            // navigate('/login');
-        }
-    },[isLoggedIn])
-
     const refs = {
         "idRef" : useRef(null),
         "pwdRef" : useRef(null) 
@@ -31,8 +21,25 @@ export default function Login() {
     const msgRefs = {
         "msgRef" : useRef(null)
     }
-
     const [formData, setFormData] = useState({'id':'', 'pwd':''});
+
+    useEffect(()=>{
+        if(isError){
+            alert('로그인 실패');
+            navigate('/login');
+            refs.idRef.current.value ='';
+            refs.pwdRef.current.value='';
+            // isError 리셋
+            dispatch(getLoginReset());
+        }
+    },[isError])
+
+    useEffect(()=>{
+        if(isLoggedIn){
+            alert('로그인 성공');
+            navigate('/');
+        }
+    },[isLoggedIn])
 
     /** form 데이터 입력 함수 */
     const handleChangeForm = (event) => {

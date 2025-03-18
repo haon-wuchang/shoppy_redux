@@ -1,28 +1,32 @@
 import React, { useContext, useEffect, useRef } from "react";
-import { AuthContext } from '../auth/AuthContext.js';
 import { CartContext } from "../context/CartContext.js";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../hooks/useCart.js";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import "../styles/cart.css";
+import {useSelector, useDispatch} from 'react-redux';
+import {getCartList,clearCartList } from '../services/cartApi.js';
 
 export default function Carts() {
     const navigate = useNavigate();
-    const { isLoggedIn } = useContext(AuthContext);
-    const { cartList, setCartList, cartCount, totalPrice } = useContext(CartContext);
-    const { getCartList, updateCartList, deleteCartItem } = useCart();
-    const hasCheckedLogin = useRef(false);      
+    const dispatch = useDispatch();
+    const isLoggedIn = useSelector(state => state.login.isLoggedIn);
+    const cartList = useSelector(state => state.cart.cartList);
+    const cartCount = useSelector(state => state.cart.cartCount);
+    const totalPrice = useSelector(state => state.cart.totalPrice);
+    const hasCheckedLogin = useRef(false);     
+    const {deleteCartItem, updateCartList} = useCart(); 
     
     useEffect(()=>{  
         if (hasCheckedLogin.current) return;  // true:로그인 상태 -->  블록 return
             hasCheckedLogin.current = true; 
 
         if(isLoggedIn) {
-            getCartList();
+            dispatch(getCartList());
         } else {  
             const select = window.confirm("로그인 서비스가 필요합니다. \n로그인 하시겠습니까?");
             select ?  navigate('/login') :  navigate('/');
-            setCartList([]);
+            dispatch(clearCartList());
         }
     } , [isLoggedIn]);
 

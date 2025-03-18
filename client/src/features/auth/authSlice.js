@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit' ;
 
 const initialState = {   // json 형식으로 사용할 초기값 생성
     isLoggedIn : false ,
+    isError : false,
 }
 
 export const authSlice = createSlice({
@@ -15,16 +16,21 @@ export const authSlice = createSlice({
      console.log('action',action.payload.result_rows);
      if(action.payload.result_rows){
         state.isLoggedIn = true;
+     }else {
+      state.isError = true;
      }      
     } ,
     setIsLogout(state){
       state.isLoggedIn = false;
+    },
+    setLoginReset(state){
+      state.isError = false;
     }
   },
 })
 
 // Action creators are generated for each case reducer function
 // 사용할 애 return 하기
-export const { setIsLoggedIn, setIsLogout } = authSlice.actions
+export const { setIsLoggedIn, setIsLogout , setLoginReset} = authSlice.actions
 
 export default authSlice.reducer
