@@ -1,11 +1,9 @@
-import React, { useContext, useEffect, useRef } from "react";
-import { CartContext } from "../context/CartContext.js";
+import React, { useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useCart } from "../hooks/useCart.js";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import "../styles/cart.css";
 import {useSelector, useDispatch} from 'react-redux';
-import {getCartList,clearCartList } from '../services/cartApi.js';
+import {getCartList,clearCartList,updateCartList,deleteCartItem } from '../services/cartApi.js';
 
 export default function Carts() {
     const navigate = useNavigate();
@@ -15,7 +13,6 @@ export default function Carts() {
     const cartCount = useSelector(state => state.cart.cartCount);
     const totalPrice = useSelector(state => state.cart.totalPrice);
     const hasCheckedLogin = useRef(false);     
-    const {deleteCartItem, updateCartList} = useCart(); 
     
     useEffect(()=>{  
         if (hasCheckedLogin.current) return;  // true:로그인 상태 -->  블록 return
@@ -29,7 +26,6 @@ export default function Carts() {
             dispatch(clearCartList());
         }
     } , [isLoggedIn]);
-
     
     return (
         <div className="cart-container">
@@ -48,16 +44,16 @@ export default function Carts() {
                 </div>
                 <div className="cart-quantity">
                     <button onClick={() => {
-                        item.qty>1 && updateCartList(item.cid, "decrease")
+                        item.qty>1 && dispatch(updateCartList(item.cid, "decrease"))
                     }}>
                     -
                     </button>
                     <input type="text" value={item.qty} readOnly />
-                    <button onClick={() => {updateCartList(item.cid, "increase")}}>
+                    <button onClick={() => {dispatch(updateCartList(item.cid, "increase"))}}>
                     +
                     </button>
                 </div>
-                <button className="cart-remove" onClick={()=>{deleteCartItem(item.cid)}}>
+                <button className="cart-remove" onClick={()=>{dispatch(deleteCartItem(item.cid))}}>
                     <RiDeleteBin6Line />
                 </button>
                 </div> 

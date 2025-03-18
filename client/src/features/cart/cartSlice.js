@@ -4,6 +4,7 @@ const initialState = {   // json 형식으로 사용할 초기값 생성
     cartCount : 0 ,
     totalPrice : 0 ,
     cartList : [] ,
+    isAdded : false,
 }
 
 export const cartSlice = createSlice({
@@ -21,11 +22,21 @@ export const cartSlice = createSlice({
       state.cartList = action.payload.result;
     },cartListReset(state){
       state.cartList = [];
+    },setTotalPrice(state,action){
+      const list = action.payload.result;
+      state.totalPrice = list.reduce((sum, item) => sum + item.price * item.qty, 0);
+    },setIsAdded(state, action){
+      if(action.payload.result_rows){
+        state.isAdded = true;       
+      }
+    },setIsAddedReset(state){
+      state.isAdded = false;
     }
   },
 })
 
 // 사용할 애 return 하기
-export const {setCartCount,clearCartCount,setCartList,cartListReset } = cartSlice.actions
+export const {setCartCount,clearCartCount,setCartList,
+    cartListReset,setTotalPrice, setIsAdded, setIsAddedReset } = cartSlice.actions
 
 export default cartSlice.reducer
