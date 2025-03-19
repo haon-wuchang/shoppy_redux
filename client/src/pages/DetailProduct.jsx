@@ -5,9 +5,9 @@ import Detail from "../components/detail_tabs/Detail.jsx";
 import Review from "../components/detail_tabs/Review.jsx";
 import ImageList from "../components/commons/ImageList.jsx";
 import StarRating from "../components/commons/StarRating.jsx";
-import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
-import {saveToCartList, updateCartList , clearAdded} from '../services/cartApi.js';
+import { saveToCartList, updateCartList , clearAdded } from '../services/cartApi.js';
+import { getProductDetail ,changeSize } from '../services/productApi.js';
 
 export default function DetailProduct() {
   const dispatch = useDispatch();
@@ -16,10 +16,10 @@ export default function DetailProduct() {
   const isAdded = useSelector(state => state.cart.isAdded);
   const navigate = useNavigate();
   const { pid } = useParams();
-  const [product, setProduct] = useState({});
-  const [imgList, setImgList] = useState([]);
-  const [detailImgList, setDetailImgList] = useState([]);
-  const [size, setSize] = useState("XS");
+  const product = useSelector(state => state.product.product);
+  const imgList = useSelector(state => state.product.imgList);
+  const detailImgList = useSelector(state => state.product.detailImgList);
+  const size = useSelector(state => state.product.size);
   const [tabName, setTabName] = useState('detail');
   const tabLabels = ['DETAIL', 'REVIEW', 'Q&A', 'RETURN & DELIVERY'];
   const tabEventNames = ['detail', 'review', 'qna', 'return'];
@@ -32,14 +32,7 @@ export default function DetailProduct() {
   },[isAdded]);
 
   useEffect(() => {
-    axios
-      .post("http://localhost:9000/product/detail", {"pid":pid}) 
-      .then((res) => {
-          setProduct(res.data);
-          setImgList(res.data.imgList);
-          setDetailImgList(res.data.detailImgList);
-        })
-      .catch((error) => console.log(error));
+          dispatch(getProductDetail(pid));
   }, []);
 
   
@@ -92,7 +85,7 @@ export default function DetailProduct() {
             <button className="product-detail-button size">사이즈 </button>
             <select
               className="product-detail-select2"
-              onChange={(e) => setSize(e.target.value)}
+              onChange={(e) => dispatch(changeSize(e.target.value))}
             >
               <option value="XS">XS</option>
               <option value="S">S</option>
