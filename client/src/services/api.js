@@ -21,6 +21,22 @@ export async function axiosPost({url, data}) {
     return result;
 }
 
+// get method
+export async function axiosGet({url, data}) {
+    let result = null;
+
+    try {
+        result = await axios({
+            method : 'get',
+            url : url,
+            data : data
+        }). then(res => res.data);
+    } catch (error) {
+        console.log(error);        
+    }
+    return result;
+}
+
 // put method
 export async function axiosPut({url, data}) {
     let result = null;
