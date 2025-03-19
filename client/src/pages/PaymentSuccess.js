@@ -4,16 +4,20 @@ import { useOrder } from '../hooks/useOrder.js';
 import { useCart } from '../hooks/useCart.js';
 import { AuthContext } from "../auth/AuthContext.js";
 import axios from "axios";
-
+import {useSelector, useDispatch} from 'react-redux';
+import {saveToOrder} from '../services/orderApi.js';
+import {clearCart} from '../services/cartApi.js';
 
 export default function PaymentSuccess() {
+    const dispatch = useDispatch();
+    const isLoggedIn = useSelector(state => state.login.isLoggedIn);
+    const totalPrice = useSelector(state => state.cart.totalPrice);
+    const orderList = useSelector(state => state.order.orderList);
+    const isSaveSuccess = useSelector(state => state.order.isSaveSuccess);
     const navigate = useNavigate();
-    const { isLoggedIn } = useContext(AuthContext);
     const [searchParams] = useSearchParams();
     const pg_token = searchParams.get("pg_token");
     const tid = localStorage.getItem("tid");
-    const { saveToOrder } = useOrder();
-    const { clearCart } = useCart();
     const hasCheckedLogin = useRef(false); 
     const [isRefresh, setIsRefresh] = useState(true);
 
@@ -22,15 +26,14 @@ export default function PaymentSuccess() {
                 hasCheckedLogin.current = true; 
     
             if(isLoggedIn) {
-                const approvePayment = async () => {
+                const approvePayment =  () => {
                     if (pg_token && tid) {
                         try {                            
-                            const result_rows = await saveToOrder();
-                            if(result_rows) {
-                                const clear_rows = await clearCart();
-                                clear_rows && result_rows && console.log("결제 승인 완료:");
-                            } 
-                            
+                            dispatch(saveToOrder(totalPrice,orderList));
+                            if(isSaveSuccess) {
+                                dispatch(clearCart());
+                                // isSaveSuccess && console.log("결제 승인 완료:");
+                            }                             
                         } catch (error) {
                             console.error("결제 승인 실패:", error);
                         }

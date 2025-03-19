@@ -1,3 +1,5 @@
+// 이 파일이 표준 api 임 
+
 // axios db 연동을 위한 공통 api
 import axios from "axios";
 

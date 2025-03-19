@@ -1,7 +1,7 @@
 import { axiosPost, axiosPut, axiosDelete } from "./api.js";
 import {
     setCartCount, clearCartCount, setCartList
-    , cartListReset, setTotalPrice, setIsAdded,setIsAddedReset
+    , cartListReset, setTotalPrice, setIsAdded, setIsAddedReset
 }
     from '../features/cart/cartSlice.js';
 
@@ -71,10 +71,20 @@ export const saveToCartList = (cartItem) => async (dispatch) => {
     if (result.result_rows) {
         dispatch(getCount());
         dispatch(getCartList());
-        dispatch(setIsAdded({result_rows}));
+        dispatch(setIsAdded({ result_rows }));
     }
 }
 
 export const clearAdded = () => (dispatch) => {
     dispatch(setIsAddedReset());
+}
+/**
+   * 장바구니 전체 삭제
+   */
+export const clearCart = () => async (dispatch) => {
+    const id = localStorage.getItem("user_id");
+    const url = 'http://localhost:9000/cart/clear';
+    const data = { "id": id };
+    const result = await axiosDelete({url,data});
+    result.result_rows && dispatch(getCartList());
 }
