@@ -86,5 +86,5 @@ export const clearCart = () => async (dispatch) => {
     const url = 'http://localhost:9000/cart/clear';
     const data = { "id": id };
     const result = await axiosDelete({url,data});
-    result.result_rows && dispatch(getCartList());
+    result.result_rows && dispatch(getCount());
 }

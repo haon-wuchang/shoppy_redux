@@ -56,7 +56,7 @@ export default function DetailProduct() {
         } else {
             //새로 추가
             const result = dispatch(saveToCartList(cartItem));
-            result && alert("장바구니에 추가되었습니다.");
+            // result && alert("장바구니에 추가되었습니다.");
         }                                            
     } else {
       const select = window.confirm("로그인 서비스가 필요합니다. \n로그인 하시겠습니까?");

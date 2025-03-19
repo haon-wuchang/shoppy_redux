@@ -22,8 +22,10 @@ export const getLogin = (formData) => async (dispatch) => {
 }
 
 export const getLogout = () => (dispatch) => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user_id");
+    // localStorage.removeItem("token");
+    // localStorage.removeItem("user_id");
+    // localStorage.removeItem("reduxState");
+    localStorage.clear();   // 로컬스토리지 전체 삭제
     dispatch(setIsLogout());
 }
 
