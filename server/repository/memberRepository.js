@@ -1,12 +1,28 @@
 import { db } from './db.js';
 
 /**
+ * 주소 변경
+ */
+export const addressUpdate = async({id, zipcode, address}) => {
+    console.log(id, zipcode, address);
+    const sql = `
+        update shoppy_member 
+            set zipcode = ?,
+                address = ?
+            where id = ?
+    `;
+    const [result] = await db.execute(sql, [zipcode, address, id]);
+    return {result_rows: result.affectedRows};
+}
+
+
+/**
  * 로그인 - select
  */
 export const checkLogin = async({id, pwd}) => {   // {id:'test', pwd:'1234'}
     const sql = `
         select count(*) as result_rows from shoppy_member 
-	        where id = ? and pwd = ?
+        where id = ? and pwd = ?
     `;
     const [ result ] = await db.execute(sql, [id, pwd]); // [[], []]
     // [{result_rows : 1}]
@@ -51,9 +67,7 @@ export const registerMember = async(formData) => {
 
     //2. db객체를 이용하여 SQL 실행 후 결과 가져오기
     const [result, fields] = await db.execute(sql, values);
-    // console.log(result);
-    // console.log(fields);
-    
+
 
     //3. 결과값 리턴
     return {"result_rows" : result.affectedRows};

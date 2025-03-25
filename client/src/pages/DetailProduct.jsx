@@ -1,38 +1,39 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect} from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { PiGiftThin } from "react-icons/pi";
 import Detail from "../components/detail_tabs/Detail.jsx";
 import Review from "../components/detail_tabs/Review.jsx";
 import ImageList from "../components/commons/ImageList.jsx";
 import StarRating from "../components/commons/StarRating.jsx";
-import { useSelector, useDispatch } from "react-redux";
-import { saveToCartList, updateCartList , clearAdded } from '../services/cartApi.js';
-import { getProductDetail ,changeSize } from '../services/productApi.js';
+import { useSelector, useDispatch } from 'react-redux';
+import { updateCartList, saveToCartList, clearAdded } from '../services/cartApi.js';
+import { getProduct, getSize } from '../services/productApi.js';
 
 export default function DetailProduct() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { pid } = useParams();
   const isLoggedIn = useSelector(state => state.login.isLoggedIn);
   const cartList = useSelector(state => state.cart.cartList);
   const isAdded = useSelector(state => state.cart.isAdded);
-  const navigate = useNavigate();
-  const { pid } = useParams();
   const product = useSelector(state => state.product.product);
   const imgList = useSelector(state => state.product.imgList);
   const detailImgList = useSelector(state => state.product.detailImgList);
   const size = useSelector(state => state.product.size);
+
   const [tabName, setTabName] = useState('detail');
   const tabLabels = ['DETAIL', 'REVIEW', 'Q&A', 'RETURN & DELIVERY'];
   const tabEventNames = ['detail', 'review', 'qna', 'return'];
 
   useEffect(()=>{
-    if(isAdded){
-      alert('장바구니에 추가되었습니다.');
+    if(isAdded) {
+      alert("장바구니에 추가되었습니다.");
       dispatch(clearAdded());
     }
-  },[isAdded]);
+  }, [isAdded]);
 
   useEffect(() => {
-          dispatch(getProductDetail(pid));
+    dispatch(getProduct(pid));
   }, []);
 
   
@@ -43,13 +44,10 @@ export default function DetailProduct() {
         const findItem = cartList && cartList.find(item => item.pid === product.pid 
                                             && item.size === size);                                  
         if(findItem !== undefined) {  
-            //qty+1 업데이트      
-            const result = dispatch(updateCartList(findItem.cid, "increase"));
-            result && alert("장바구니에 추가되었습니다.");
+            //pid, size 동일한 경우 qty +1
+            dispatch(updateCartList(findItem.cid, "increase"));
         } else {
-            //새로 추가
-            const result = dispatch(saveToCartList(cartItem));
-            // result && alert("장바구니에 추가되었습니다.");
+            dispatch(saveToCartList(cartItem));
         }                                            
     } else {
       const select = window.confirm("로그인 서비스가 필요합니다. \n로그인 하시겠습니까?");
@@ -85,7 +83,7 @@ export default function DetailProduct() {
             <button className="product-detail-button size">사이즈 </button>
             <select
               className="product-detail-select2"
-              onChange={(e) => dispatch(changeSize(e.target.value))}
+              onChange={(e) => dispatch(getSize(e.target.value))}
             >
               <option value="XS">XS</option>
               <option value="S">S</option>

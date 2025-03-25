@@ -6,7 +6,8 @@ const router = express.Router();
 router
     .post('/signup', controller.registerMember)
     .post('/idcheck', controller.getIdCheck)
-    .post('/login', controller.checkLogin);
+    .post('/login', controller.checkLogin)
+    .put('/addressUpdate', controller.addressUpdate);
 
 
 

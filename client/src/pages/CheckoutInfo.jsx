@@ -1,11 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
-import DaumPostcode from "react-daum-postcode";
-import { useOrder } from '../hooks/useOrder.js';
-import {useSelector, usePatch, useDispatch} from 'react-redux';
-import {getOrderList, paymentKakaoPay} from '../services/orderApi.js';
-
 import "../styles/cart.css";
 import "../styles/checkoutinfo.css";
+import React, { useState, useEffect, useRef } from "react";
+import DaumPostcode from "react-daum-postcode";
+import { useSelector, useDispatch } from 'react-redux';
+import { getOrderList, paymentKakaoPay, getDeliveryAddressUpdate } from '../services/orderApi.js';
 
 export default function CheckoutInfo() {
     const dispatch = useDispatch();
@@ -13,65 +11,58 @@ export default function CheckoutInfo() {
     const totalPrice = useSelector(state => state.cart.totalPrice);
     const orderList = useSelector(state => state.order.orderList);
     const member = useSelector(state => state.order.member);
+    const [isVisible, setIsVisible] = useState(false);  //주소 입력창 Toggle
+    const [isOpen, setIsOpen] = useState(false);        //주소 검색 버튼 Toggle */
+
     const [zipcode, setZipcode] = useState("");
-    const [address, setAddress] = useState("");
-    const [ qrUrl, setQrUrl] = useState('');
+    const [address, setAddress] = useState("");    
     const   zipcodeRef = useRef(null), 
             addressRef = useRef(null), 
             detailAddressRef = useRef(null),
             terms1Ref = useRef(null),
-            terms2Ref = useRef(null);
+            terms2Ref = useRef(null),
+            deliveryButtonRef = useRef(null);
 
     useEffect(()=>{
         if(isLoggedIn) {
             dispatch(getOrderList());
         }
+        if(member.zipcode !== null) setIsVisible(!isVisible);
     }, [isLoggedIn]);
 
-    const [isOpen, setIsOpen] = useState(false);    /** 주소검색 버튼Toggle */
-    const handleToggle = () => {    /** 주소 검색 버튼 */
-        detailAddressRef.current.value = '';
+    /** 배송지변경 버튼 이벤트 */
+    const handleToggle = () => {
+        // setIsVisible(isVisible);    
+        // detailAddressRef.current.value = '';
         setIsOpen(!isOpen);
     };
+console.log('isVisible--->> ', isVisible);
+    
 
     /** 결제하기 버튼 이벤트 처리 */
     const handlePayment = () => {
-        console.log(terms1Ref.current.checked);
-        console.log(terms2Ref.current.checked);
         if(!(terms1Ref.current.checked && terms2Ref.current.checked)) {
             alert("약관 동의 후 결제가 진행됩니다.");
+        } else if(member.zipcode === null) { 
+            alert("배송지를 추가해주세요");
+            setIsVisible(!isVisible);
+            deliveryButtonRef.current.focus();
+            deliveryButtonRef.current.style.outline = '3px dotted coral';
+        } else if (detailAddressRef.current.value === "") {
+            alert("상세 주소를 입력해주세요");
+            detailAddressRef.current.focus();
         } else {
-             dispatch(paymentKakaoPay(totalPrice,orderList));
-            
-            // const id = localStorage.getItem("user_id");        
-            // try {
-            //     const response = await axios.post("http://localhost:9000/payment/qr", {
-            //         id:id,
-            //         item_name: "테스트 상품",
-            //         total_amount: 1000, // 결제 금액 (KRW)
-            //     });
-            //     // window.location.href = response.data.next_redirect_pc_url;
-
-            //     if ( response.data.next_redirect_pc_url) {
-            //         // setQrUrl(response.data.next_redirect_mobile_url);
-
-            //         window.location.href = response.data.next_redirect_pc_url;
-            //     }
-            // } catch (error) {
-            //     console.error("QR 결제 요청 실패:", error);
-            // }
+            dispatch(paymentKakaoPay(totalPrice, orderList));
+        
         }//if
     }//handlePayment
 
-    /** 배송지 변경 */
+
+    /** 주소변경 버튼 이벤트 */
     const addressUpdate = () => {        
         const zipcode = zipcodeRef.current.value;
-        const address = addressRef.current.value;
-        const detail = detailAddressRef.current.value;
-        const formData = {zipcode:zipcode, address:address, detail:detail};
-        
-        //배송지 변경 - 서버연동 코드 추가        
-        
+        const address = addressRef.current.value.concat(' ', detailAddressRef.current.value);
+        dispatch(getDeliveryAddressUpdate(zipcode, address));        
     }
 
     //---- DaumPostcode 관련 디자인 및 이벤트 시작 ----//
@@ -85,11 +76,14 @@ export default function CheckoutInfo() {
     const postCodeStyle = {
         width: "360px",
         height: "480px",
+        left: 1000,
+        top:520
     };
 
     const completeHandler = (data) => {
         setZipcode(data.zonecode);
         setAddress(data.address);
+        deliveryButtonRef.current.style.outline = '';
     };
 
     const closeHandler = (state) => {
@@ -128,7 +122,7 @@ return (
     <div className="section">
         <h2 className="section-title">
         받는사람정보 &nbsp;&nbsp;&nbsp;
-        <button onClick={handleToggle}>배송지 변경</button>
+        
         </h2>
         <div className="info-box">
         <div className="info-grid">
@@ -137,17 +131,27 @@ return (
 
             <div className="label">배송주소</div>
             {   member.zipcode ? 
-                <div className="value">{member.zipcode}/{member.address}</div>
-                :
                 <div className="value">
-                    { zipcode ? (
-                        <>
-                            <input type="text" value={zipcode} className="zipcode" ref={zipcodeRef}/>
-                            <input type="text" value={address} ref={addressRef}/>
-                            <input type="text" placeholder="상세정보 입력" ref={detailAddressRef}/>
-                            <button className="btn" onClick={addressUpdate}>주소 변경</button>
+                    {member.zipcode}/{member.address}
+                    <button className="addr-delivery-btn" onClick={handleToggle} ref={deliveryButtonRef}>배송지 변경</button> 
+                    { isVisible &&  <>
+                        <input type="text" placeholder="우편번호" value={zipcode} className="zipcode" ref={zipcodeRef}/>
+                        <input type="text" placeholder="기본주소" value={address} ref={addressRef}/>
+                        <input type="text" placeholder="상세주소" ref={detailAddressRef}/>
+                        <button className="addr-update-btn" onClick={addressUpdate}>주소 변경</button>
                         </>
-                    ) :  "배송지를 추가해주세요!!"}
+                    }               
+                </div>
+                :
+                <div className="addr-value">
+                    <button className="addr-delivery-btn" onClick={handleToggle} ref={deliveryButtonRef}>배송지 변경</button>
+                    { !isVisible &&  <>
+                        <input type="text" placeholder="우편번호" value={zipcode} className="zipcode" ref={zipcodeRef}/>
+                        <input type="text" placeholder="기본주소" value={address} ref={addressRef}/>
+                        <input type="text" placeholder="상세주소" ref={detailAddressRef}/>
+                        <button className="addr-update-btn" onClick={addressUpdate}>주소 변경</button>
+                        </>
+                    }
                 </div>
             }            
 

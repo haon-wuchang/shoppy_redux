@@ -1,24 +1,39 @@
-import { setProductList,setProduct ,setImgList,setDetailImgList, setSize} from '../features/product/productSlice.js';
-import { axiosGet, axiosPost } from './api.js';
+import { axiosGet, axiosPost } from "./api.js";
+import {    setProductList, 
+            setProduct, 
+            setImgList, 
+            setDetailImgList, 
+            setSize } from "../features/product/productSlice.js";
 
-export const getProductList = () => async (dispatch) => {
-    const url = 'http://localhost:9000/product/all';
-    const result = await axiosGet({ url });
-    dispatch(setProductList({ result }));
-}
+            
+/** 상품 사이즈 변경 */
+export const getSize = (size) => (dispatch) => {
+    dispatch(setSize({size}));
+}             
 
-export const getProductDetail = (pid) => async (dispatch) => {
+/**
+* 상품 상세
+ */
+export const getProduct = (pid) => async(dispatch) => {
     const url = 'http://localhost:9000/product/detail';
-    const data = { "pid": pid };
+    const data = {"pid":pid};
 
-    const result = await axiosPost({ url, data });
+    const result = await axiosPost({url, data});    
+    const product = result;
     const imgList = result.imgList;
-    const detailImgList = result.detailImgList; 
-    dispatch(setProduct({result}));
+    const detailImgList = result.detailImgList;
+
+    dispatch(setProduct({product}))
     dispatch(setImgList({imgList}));
     dispatch(setDetailImgList({detailImgList}));
 }
 
-export const changeSize = (value) => (dispatch) => {
-    dispatch(setSize({value}));
+/**
+ * 상품 전체 리스트
+ */
+export const getProductList = () => async(dispatch) => {
+    const url = 'http://localhost:9000/product/all';
+    const result = await axiosGet({url});
+
+    dispatch(setProductList({result}));    
 }

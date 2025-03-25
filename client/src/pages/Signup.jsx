@@ -36,7 +36,6 @@ export default function Signup() {
                         .then(res => {
                             if(res.data.result_rows === 1){
                                 alert("회원가입에 성공하셨습니다.");
-                                // window.location.href = '/login';
 
                                 //1초후에 로그인 페이지 이동 --> useNavigate
                                 setTimeout(()=>{

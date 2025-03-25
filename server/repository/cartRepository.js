@@ -43,9 +43,10 @@ export const updateQty = async({cid, type}) => {
 export const getCount = async({id}) => {
     const sql = `
         select count(*) as count from shoppy_cart
-            where id= ?
+            where id = ?
     `;
     const [result] = await db.execute(sql, [id]);  // [[{count: 2}] [count필드정보]]
+    
     return result[0]; 
 }
 
@@ -54,24 +55,16 @@ export const getCount = async({id}) => {
 /**
  * 장바구니 전체 조회
  */
-// export const getItems = async({id}) => {
-//     const sql = `
-//             select * from view_cart_list 
-//             where id = ?
-//     `;
-//     const [result] = await db.execute(sql, [id]);
-    
-//     return result; 
-// }
 export const getItems = async({id}) => {
     const sql = `
-            select * from shoppy_cart_list 
+            select * from view_cart_list 
             where id = ?
     `;
     const [result] = await db.execute(sql, [id]);
     
     return result; 
 }
+
 
 /**
  * 장바구니 추가

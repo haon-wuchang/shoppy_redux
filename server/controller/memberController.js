@@ -2,6 +2,15 @@ import * as repository from '../repository/memberRepository.js';
 import jwt from 'jsonwebtoken';
 
 /**
+ * 주소 변경
+ */
+export const addressUpdate = async(req, res) => {
+    const result = await repository.addressUpdate(req.body);
+    res.json(result);
+    res.end();
+}
+
+/**
  * 로그인 : checkLogin
  */
 export const checkLogin = async(req, res) => {

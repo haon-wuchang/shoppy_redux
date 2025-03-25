@@ -10,7 +10,7 @@ export default function DetailProduct({ addCart }) {
 
   useEffect(() => {
     axios
-      .get("/data/products.json") // http://localhost:3000/data/products.json
+      .get("/data/products.json") // http://13.125.159.44:3000/data/products.json
       .then((res) => {
         res.data.filter((product) => {
           if (product.pid === pid) setProduct(product);

@@ -1,43 +1,42 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useContext, useEffect } from 'react';
 import '../styles/login.css';
 import { FaUser } from "react-icons/fa";
 import { FaLock } from "react-icons/fa";
 import { validateLogin } from '../utils/funcValidate.js';
 import { useNavigate } from 'react-router-dom';
-import { getLogin,getLoginReset } from '../services/authApi.js';
-import {useSelector, useDispatch} from 'react-redux';
+import { getLogin, getLoginReset } from '../services/authApi.js';
+import { useSelector, useDispatch } from 'react-redux';
+
 
 export default function Login() {
-    const dispatch = useDispatch();
-    const isLoggedIn = useSelector(state => state.login.isLoggedIn); 
-    const isError = useSelector(state => state.login.isError);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const isLoggedIn = useSelector(state => state.login.isLoggedIn);
+    const isError = useSelector(state => state.login.isError);
     const refs = {
-        "idRef" : useRef(null),
-        "pwdRef" : useRef(null) 
+        "idRef" : useRef(null), "pwdRef" : useRef(null) 
     }  
-    const msgRefs = {
-        "msgRef" : useRef(null)
-    }
+    const msgRefs = {   "msgRef" : useRef(null)   }    
     const [formData, setFormData] = useState({'id':'', 'pwd':''});
-
+    
     useEffect(()=>{
-        if(isError){
-            alert('로그인 실패');
-            navigate('/login');
-            refs.idRef.current.value ='';
-            refs.pwdRef.current.value='';
-            // isError 리셋
+        if(isError) {
+            alert("로그인 실패, 다시 시도해 주세요");
+            navigate("/login");
+            refs.idRef.current.value = "";
+            refs.pwdRef.current.value = "";
             dispatch(getLoginReset());
         }
-    },[isError])
+    }, [isError]);
 
-    useEffect(()=>{
+    useEffect(() => {
         if(isLoggedIn){
-            alert('로그인 성공');
-            navigate('/');
-        }
-    },[isLoggedIn])
+            alert("로그인 성공!!");
+            navigate("/");            
+        } 
+    }, [isLoggedIn]);
+
+
 
     /** form 데이터 입력 함수 */
     const handleChangeForm = (event) => {
@@ -45,10 +44,11 @@ export default function Login() {
         setFormData({...formData, [name] : value}); 
     }
 
+    /** Submit 함수 */
     const handleLoginSubmit = (event) => {
         event.preventDefault();        
         if(validateLogin(refs, msgRefs)) {
-            dispatch( getLogin(formData));         
+            dispatch(getLogin(formData));
         }
     }
 

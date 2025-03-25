@@ -74,7 +74,7 @@ export const getList = async() => {
         from shoppy_product
     `;
     const [result] = await db.execute(sql);
-    // console.log('result--> ', result);
+    console.log('result--> ', result);
     
     return result;  // [ {} ,{} ,{}]
 }

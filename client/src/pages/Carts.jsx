@@ -1,18 +1,18 @@
+import "../styles/cart.css";
 import React, { useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import "../styles/cart.css";
-import {useSelector, useDispatch} from 'react-redux';
-import {getCartList,clearCartList,updateCartList,deleteCartItem } from '../services/cartApi.js';
+import { useSelector, useDispatch } from 'react-redux'; 
+import {getCartList, clearCartList, updateCartList, deleteCartItem }  from '../services/cartApi.js';
 
 export default function Carts() {
-    const navigate = useNavigate();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const isLoggedIn = useSelector(state => state.login.isLoggedIn);
     const cartList = useSelector(state => state.cart.cartList);
     const cartCount = useSelector(state => state.cart.cartCount);
     const totalPrice = useSelector(state => state.cart.totalPrice);
-    const hasCheckedLogin = useRef(false);     
+    const hasCheckedLogin = useRef(false);      
     
     useEffect(()=>{  
         if (hasCheckedLogin.current) return;  // true:로그인 상태 -->  블록 return
@@ -26,6 +26,7 @@ export default function Carts() {
             dispatch(clearCartList());
         }
     } , [isLoggedIn]);
+
     
     return (
         <div className="cart-container">
@@ -86,8 +87,7 @@ export default function Carts() {
                 <img src="https://plus.unsplash.com/premium_photo-1683758342885-7acf321f5d53?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fCVFQyU5RSVBNSVFQiVCMCU5NCVFQSVCNSVBQyVFQiU4QiU4OHxlbnwwfHwwfHx8MA%3D%3D" alt="" />
             </div> 
         }       
-        {/* 주문버튼 출력 종료 */}      
-        
+        {/* 주문버튼 출력 종료 */} 
         </div>
     );
     }

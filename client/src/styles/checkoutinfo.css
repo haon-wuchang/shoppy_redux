@@ -46,6 +46,14 @@
   gap: 5px;
 }
 
+.addr-value input {
+  padding: 4px 10px;
+  margin: 5px;
+  border-radius: 4px;
+  border: 1px solid gray;
+}
+
+
 /* 태그 스타일 */
 .tag {
   font-size: 12px;
@@ -74,6 +82,25 @@
   border: none;
   border-radius: 4px;
   cursor: pointer;
+}
+
+.addr-update-btn {
+  padding: 4px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: coral;
+  border: 1px solid coral;
+}
+
+.addr-delivery-btn {
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: #999;
+  border: 1px solid #999;
+  color: white;
+  margin-left : 30px;
 }
 
 .btn:hover {
