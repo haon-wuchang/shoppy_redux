@@ -6,7 +6,7 @@ import { setOrderList, setMember, setIsSaveSuccess } from '../features/order/ord
  */
 export const getDeliveryAddressUpdate = (zipcode, address) => async(dispatch) => {
     const id = localStorage.getItem("user_id");
-    const url = 'http://localhost:9000/member/addressUpdate';
+    const url = 'http://3.39.192.201:9000/member/addressUpdate';
     const data = {id, zipcode, address};
     const result = await axiosPut({url, data});
     result.result_rows && dispatch(getOrderList());
@@ -19,7 +19,7 @@ export const saveToOrder = (orderList, totalPrice) => async(dispatch) => {
     const id = localStorage.getItem("user_id"); 
     const tid = localStorage.getItem("tid"); 
     const type = "KAKAO_PAY"; 
-    const url = 'http://localhost:9000/order/add';
+    const url = 'http://3.39.192.201:9000/order/add';
     const data = {  
         id: id,  
         tid: tid,
@@ -50,7 +50,7 @@ export const paymentKakaoPay = (totalPrice, orderList) => async(dispatch) => {
     const id = localStorage.getItem("user_id"); 
     const type = "KAKAO_PAY"; 
     const pname = orderList[0].pname.concat(" 외");
-    const url = 'http://localhost:9000/payment/qr';
+    const url = 'http://3.39.192.201:9000/payment/qr';
     const data = {
         id:id,
         item_name: pname,
@@ -76,7 +76,7 @@ export const paymentKakaoPay = (totalPrice, orderList) => async(dispatch) => {
  */
 export const getOrderList = () => async(dispatch) => {
     const id = localStorage.getItem("user_id");
-    const url = 'http://localhost:9000/order/all';
+    const url = 'http://3.39.192.201:9000/order/all';
     const data = {"id": id};
 
     const result = await axiosPost({url, data});  
